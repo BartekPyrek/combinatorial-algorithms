@@ -16,7 +16,7 @@ public class zad4 {
         return m - 1;
     }
 
-    static void perm(int m, int[] p) {
+    static void BMI(int m, int[] p) {
         int i;
         int count = 0;
         int[] tab = new int[m + 1];
@@ -62,7 +62,7 @@ public class zad4 {
             for (int i = 1; i <= a; i++) {
                 p[i] = i;
             }
-            perm(a, p);
+            BMI(a, p);
             in.close();
         }
     }

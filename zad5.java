@@ -5,61 +5,61 @@ import java.util.Set;
 
 public class zad5<T> {
 
-    private Set<Set<Set<T>>> parts;
+    private Set<Set<Set<T>>> czesci;
     private Set<Set<T>> pow;
-    private Set<T> base;
+    private Set<T> baza;
 
     public static void main(String[] args) {
-        Set<Integer> baseSet = new HashSet<Integer>();
-        baseSet.add(1);
-        baseSet.add(2);
-        baseSet.add(3);
-        baseSet.add(4);
-        zad5<Integer> partSetCreator = new zad5<Integer>(baseSet);
-        Set<Set<Set<Integer>>> partitionSets = partSetCreator.findAllPartitions();
+        Set<Integer> zbior = new HashSet<Integer>();
+        zbior.add(1);
+        zbior.add(2);
+        zbior.add(3);
+        zbior.add(4);
+        zad5<Integer> kreatorpodzialow = new zad5<Integer>(zbior);
+        Set<Set<Set<Integer>>> podzialy = kreatorpodzialow.znajdzWszystkiePodzialy();
 
         System.out.println("Wyniki:");
-        partitionSets.stream().forEach(result -> System.out.println(result));
-        System.out.println("Zestaw początkowy: " + baseSet);
-        System.out.println("Ilość wyników: " + partitionSets.size());
+        podzialy.stream().forEach(result -> System.out.println(result));
+        System.out.println("Zestaw początkowy: " + zbior);
+        System.out.println("Ilość wyników: " + podzialy.size());
     }
 
-    public zad5(Set<T> base) {
-        this.base = base;
-        this.pow = powerSet(base);
+    public zad5(Set<T> baza) {
+        this.baza = baza;
+        this.pow = powerSet(baza);
         // Usuwa pusty set gdy nie jest to jedyne wejście do seta
         if (pow.size() > 1) {
             pow.remove(new HashSet<T>());
         }
-        this.parts = new HashSet<Set<Set<T>>>();
+        this.czesci = new HashSet<Set<Set<T>>>();
     }
 
     // Znajduje zestawy części dla każdego wpisu oraz zwraca podziały, które zostały
     // znalezione
-    public Set<Set<Set<T>>> findAllPartitions() {
+    public Set<Set<Set<T>>> znajdzWszystkiePodzialy() {
         for (Set<T> set : pow) {
-            Set<Set<T>> current = new HashSet<Set<T>>();
-            current.add(set);
-            findPartSets(current);
+            Set<Set<T>> obecny = new HashSet<Set<T>>();
+            obecny.add(set);
+            szukajPodzialy(obecny);
         }
-        return parts;
+        return czesci;
     }
 
     // Znajduje wszystkie zestawy podziałów dla danych wejściowych i podaje je do
-    // zmiennej globalnej parts
-    private void findPartSets(Set<Set<T>> current) {
-        int maxLen = base.size() - deepSize(current);
+    // zmiennej globalnej czesci
+    private void szukajPodzialy(Set<Set<T>> obecny) {
+        int maxLen = baza.size() - glebokosc(obecny);
         if (maxLen == 0) {
-            parts.add(current);
+            czesci.add(obecny);
         } else {
             for (int i = 1; i <= maxLen; i++) {
                 for (Set<T> set : pow) {
                     if (set.size() == i) {
-                        if (!anyInDeepSet(set, current)) {
-                            Set<Set<T>> next = new HashSet<Set<T>>();
-                            next.addAll(current);
-                            next.add(set);
-                            findPartSets(next);
+                        if (!czyGlebokoOsadzony(set, obecny)) {
+                            Set<Set<T>> nastepny = new HashSet<Set<T>>();
+                            nastepny.addAll(obecny);
+                            nastepny.add(set);
+                            szukajPodzialy(nastepny);
                         }
                     }
                 }
@@ -68,13 +68,13 @@ public class zad5<T> {
     }
 
     // Tworzy power set z podstawowego seta.
-    private Set<Set<T>> powerSet(Set<T> base) {
+    private Set<Set<T>> powerSet(Set<T> baza) {
         Set<Set<T>> pset = new HashSet<Set<T>>();
-        if (base.isEmpty()) {
+        if (baza.isEmpty()) {
             pset.add(new HashSet<T>());
             return pset;
         }
-        List<T> list = new ArrayList<T>(base);
+        List<T> list = new ArrayList<T>(baza);
         T head = list.get(0);
         Set<T> rest = new HashSet<T>(list.subList(1, list.size()));
         for (Set<T> set : powerSet(rest)) {
@@ -88,19 +88,19 @@ public class zad5<T> {
     }
 
     // Zsumowany rozmiar wszystkich podzbiorów
-    private int deepSize(Set<Set<T>> set) {
-        int deepSize = 0;
+    private int glebokosc(Set<Set<T>> set) {
+        int glebokosc = 0;
         for (Set<T> s : set) {
-            deepSize += s.size();
+            glebokosc += s.size();
         }
-        return deepSize;
+        return glebokosc;
     }
 
     // Sprawdza, czy którykolwiek z zestawów należy do któregokolwiek z podzbiorów
-    private boolean anyInDeepSet(Set<T> set, Set<Set<T>> current) {
+    private boolean czyGlebokoOsadzony(Set<T> set, Set<Set<T>> obecny) {
         boolean containing = false;
 
-        for (Set<T> s : current) {
+        for (Set<T> s : obecny) {
             for (T item : set) {
                 containing |= s.contains(item);
             }
