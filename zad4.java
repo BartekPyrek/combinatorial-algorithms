@@ -7,13 +7,13 @@ public class zad4 {
     }
 
     static int B(int m, int i) {
-        if ((m % 2 == 0) && (m > 2)) {
-            if (i < (m - 1))
+        if (m % 2 == 0 && m > 2) {
+            if (i < m - 1) {
                 return i;
-            else
-                return m - 2;
-        } else
-            return m - 1;
+            }
+            return m - 2;
+        }
+        return m - 1;
     }
 
     static void perm(int m, int[] p) {
@@ -28,7 +28,8 @@ public class zad4 {
         while (count < silnia(m)) {
             if (tab[mi] == mi) {
                 if (tab[mi] == 1 && mi == 1) {
-                    count += 1;
+                    count++;
+                    System.out.print(count + ": ");
                     for (i = 1; i <= m; i++) {
                         System.out.print(p[i]);
                     }
@@ -37,10 +38,10 @@ public class zad4 {
                 for (i = 1; i <= mi; i++) {
                     tab[i] = 1;
                 }
-                mi += 1;
+                mi++;
             }
             if (tab[mi] < mi) {
-                i=p[mi];
+                i = tab[mi];
                 temp = p[B(mi, i)];
                 p[B(mi, i)] = p[mi];
                 p[mi] = temp;
