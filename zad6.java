@@ -1,9 +1,7 @@
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class zad6 {
     static int licznik = 1;
-    static int licznik2 = 1;
     static int wybrana_liczba;
 
     public static void main(String[] args) {
@@ -17,9 +15,9 @@ public class zad6 {
 
     static void generujKompozycje(int n, String tekst) {
         if (n == 0) {
-            System.out.println("Kompozycja liczby " + wybrana_liczba + " numer " + licznik2 + ") "
+            System.out.println("Kompozycja liczby " + wybrana_liczba + " numer " + licznik + ") "
                     + tekst.substring(0, tekst.length() - 1));
-            licznik2++;
+            licznik++;
             return;
         }
 
