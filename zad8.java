@@ -3,159 +3,175 @@ import java.util.Collections;
 
 public class zad8 {
 
-    static int nominaly = 4;
-    static int miejscaNaKopercie = 4;
-    static int dokladnosc = 10;
-    static ArrayList<Integer> tablicaNominalow;
-    static int sumaZnaczkow = 0;
-    static Boolean czyDalej = true;
-    static int najwyzszaSuma = 0;
-    static ArrayList<Integer> listaPowtorzen = new ArrayList<>();
-    static String najlepszeNominaly;
-    static boolean czyTakieSame;
+    //nominały
+    static int denominations = 4;
+    //miejsca na kopercie
+    static int stamps = 4;
+    //dokladonosc
+    static int accuracy = 10;
+    //tablica nominałow
+    static ArrayList<Integer> tableofDenominations;
+    //suma znaczków
+    static int sumOfStamps = 0;
+    //czy dalej
+    static Boolean further = true;
+    //najwyższa suma
+    static int highestSum = 0;
+    //lista powtorzen
+    static ArrayList<Integer> listOfRepetition = new ArrayList<>();
+    //najlepsze nominały
+    static String bestDenominations;
+    //czy takie same
+    static boolean isTheSame;
 
     public static void main(String[] args) {
-        System.out.println("Ilosc znaczkow: " + nominaly + " \nMiejsc na kopercie:  " + miejscaNaKopercie);
-        tablicaNominalow = generujNominaly(nominaly);
-        int rozwiazanie;
-        System.out.println("Start wyszukiwania od nominałów o wartościach: " + tablicaNominalow.toString() + "\n");
-        while (czyDalej) {
-            rozwiazanie = rozwiaz(nominaly, miejscaNaKopercie);
-            usprawnijSzukanie(dokladnosc, rozwiazanie);
-            reorganizujTabliceNominalow(nominaly, miejscaNaKopercie, dokladnosc, rozwiazanie);
+        System.out.println("Ilosc znaczkow: " + denominations + " \nMiejsc na kopercie:  " + stamps);
+        tableofDenominations = generateDenominations(denominations);
+        int solution;
+        System.out.println("Start wyszukiwania od nominałów o wartościach: " + tableofDenominations.toString() + "\n");
+        while (further) {
+            solution = solve(denominations, stamps);
+            improveSearch(accuracy, solution);
+            reorganiseTableofDenominations(denominations, stamps, accuracy, solution);
         }
-        System.out.println("\nNajwyższa możliwa do uzyskania liczba to: " + najwyzszaSuma
-                + " dla znaczków o nominałach: " + najlepszeNominaly + "\n\n");
+        System.out.println("\nNajwyższa możliwa do uzyskania liczba to: " + highestSum
+                + " dla znaczków o nominałach: " + bestDenominations + "\n\n");
     }
 
-    public static ArrayList<Integer> generujNominaly(int nominaly) {
-        ArrayList<Integer> tablica = new ArrayList<Integer>(nominaly);
-        for (int i = 1; i <= nominaly; i++) {
-            tablica.add(i);
+    //generuj nominały
+    public static ArrayList<Integer> generateDenominations(int denominations) {
+        ArrayList<Integer> table = new ArrayList<Integer>(denominations);
+        for (int i = 1; i <= denominations; i++) {
+            table.add(i);
         }
-        return tablica;
+        return table;
     }
 
-    public static int rozwiaz(int nominaly, int miejsca) {
-        int liczba = 1;
-        int poprzedniaSuma = 0;
-        int aktualnaSuma;
+    //rozwiąż
+    public static int solve(int denominations, int places) {
+        int number = 1;
+        int previousSum = 0;
+        int actualSum;
         while (true) {
-            if (miejsca > liczba) {
-                generujRozklad(liczba, liczba);
+            if (places > number) {
+                generateDistribution(number, number);
             } else {
-                generujRozklad(liczba, miejsca);
+                generateDistribution(number, places);
             }
 
-            if (sumaZnaczkow - poprzedniaSuma > 1) {
-                aktualnaSuma = poprzedniaSuma;
-                if (najwyzszaSuma < aktualnaSuma) {
-                    najwyzszaSuma = aktualnaSuma;
-                    najlepszeNominaly = tablicaNominalow.toString();
-                    System.out.println(najwyzszaSuma + " dla tablicy nominalow: " + najlepszeNominaly);
+            if (sumOfStamps - previousSum > 1) {
+                actualSum = previousSum;
+                if (highestSum < actualSum) {
+                    highestSum = actualSum;
+                    bestDenominations = tableofDenominations.toString();
+                    System.out.println(highestSum + " dla tablicy nominalow: " + bestDenominations);
                 }
                 break;
             }
-            if (miejsca * Collections.max(tablicaNominalow) == liczba) {
-                aktualnaSuma = sumaZnaczkow;
-                if (najwyzszaSuma < aktualnaSuma) {
-                    najwyzszaSuma = aktualnaSuma;
-                    najlepszeNominaly = tablicaNominalow.toString();
-                    System.out.println(najwyzszaSuma + " dla tablicy nominalow: " + najlepszeNominaly);
+            if (places * Collections.max(tableofDenominations) == number) {
+                actualSum = sumOfStamps;
+                if (highestSum < actualSum) {
+                    highestSum = actualSum;
+                    bestDenominations = tableofDenominations.toString();
+                    System.out.println(highestSum + " dla tablicy nominalow: " + bestDenominations);
                 }
                 break;
             }
 
-            liczba++;
-            poprzedniaSuma = sumaZnaczkow;
+            number++;
+            previousSum = sumOfStamps;
         }
-        return aktualnaSuma;
+        return actualSum;
     }
 
-    public static void usprawnijSzukanie(int licznik, int aktualnaSuma) {
-        listaPowtorzen.add(aktualnaSuma);
-        if (listaPowtorzen.size() > licznik) {
-            listaPowtorzen.remove(0);
+    //usprawnij szukanie
+    public static void improveSearch(int counter, int actualSum) {
+        listOfRepetition.add(actualSum);
+        if (listOfRepetition.size() > counter) {
+            listOfRepetition.remove(0);
         }
     }
 
-    public static void reorganizujTabliceNominalow(int nominaly, int miejsca, int licznik, int sumaNominalow) {
-        for (int i = 1; i < listaPowtorzen.size(); i++) {
-            if (!listaPowtorzen.get(0).equals(listaPowtorzen.get(i))) {
-               czyTakieSame = false;
+    //reorganizuje tablice nominałów
+    public static void reorganiseTableofDenominations(int denominations, int places, int counter, int sumOfDenominations) {
+        for (int i = 1; i < listOfRepetition.size(); i++) {
+            if (!listOfRepetition.get(0).equals(listOfRepetition.get(i))) {
+               isTheSame = false;
             }
 
         }
-        czyTakieSame = true;
+        isTheSame = true;
         
-        if ((listaPowtorzen.size() > licznik - 1) && czyTakieSame) {
-            if (sumaNominalow == miejsca) {
-                tablicaNominalow.remove(tablicaNominalow.size() - 1);
-                listaPowtorzen.clear();
+        if ((listOfRepetition.size() > counter - 1) && isTheSame) {
+            if (sumOfDenominations == places) {
+                tableofDenominations.remove(tableofDenominations.size() - 1);
+                listOfRepetition.clear();
             } else {
-                tablicaNominalow.set(tablicaNominalow.size() - 1, 116);
-                listaPowtorzen.clear();
+                tableofDenominations.set(tableofDenominations.size() - 1, 116);
+                listOfRepetition.clear();
             }
             return;
         }
 
-        int wartoscElementu = tablicaNominalow.get(tablicaNominalow.size() - 1);
-        if (wartoscElementu == 1) {
-            czyDalej = false;
-        } else if (wartoscElementu <= 115) {
-            tablicaNominalow.set(tablicaNominalow.size() - 1, wartoscElementu + 1);
+        int valueOfElement = tableofDenominations.get(tableofDenominations.size() - 1);
+        if (valueOfElement == 1) {
+            further = false;
+        } else if (valueOfElement <= 115) {
+            tableofDenominations.set(tableofDenominations.size() - 1, valueOfElement + 1);
         } else {
-            tablicaNominalow.remove(tablicaNominalow.size() - 1);
-            reorganizujTabliceNominalow(nominaly, miejsca, licznik, sumaNominalow);
-            wartoscElementu = tablicaNominalow.get(tablicaNominalow.size() - 1);
-            tablicaNominalow.add(wartoscElementu + 1);
+            tableofDenominations.remove(tableofDenominations.size() - 1);
+            reorganiseTableofDenominations(denominations, places, counter, sumOfDenominations);
+            valueOfElement = tableofDenominations.get(tableofDenominations.size() - 1);
+            tableofDenominations.add(valueOfElement + 1);
         }
     }
     
-    static void generujRozklad(int liczba, int dlugoscLiczbyZapisanejJedynkami) {
-        int dlugosc = 1;
-        int indeks;
-        ArrayList<Integer> rozklad = new ArrayList<Integer>();
-        rozklad.add(-1);
-        rozklad.add(liczba);
-        while (dlugosc <= dlugoscLiczbyZapisanejJedynkami) {
-            if (waliduj(rozklad)) {
-                sumaZnaczkow = sum(rozklad);
+    //generuj rozkład
+    static void generateDistribution(int number, int lengthWithOnes) {
+        int length = 1;
+        int index;
+        ArrayList<Integer> distribution = new ArrayList<Integer>();
+        distribution.add(-1);
+        distribution.add(number);
+        while (length <= lengthWithOnes) {
+            if (validate(distribution)) {
+                sumOfStamps = sum(distribution);
             }
-            indeks = dlugosc - 1;
-            while (rozklad.get(dlugosc) - rozklad.get(indeks) < 2) {
-                indeks--;
+            index = length - 1;
+            while (distribution.get(length) - distribution.get(index) < 2) {
+                index--;
             }
-            if (indeks != 0) {
-                for (int i = dlugosc - 1; i >= indeks; i--) {
-                    rozklad.set(i, rozklad.get(indeks) + 1);
+            if (index != 0) {
+                for (int i = length - 1; i >= index; i--) {
+                    distribution.set(i, distribution.get(index) + 1);
                 }
-                rozklad.set(dlugosc, 0);
+                distribution.set(length, 0);
             } else {
-                for (int i = 1; i <= dlugosc; i++) {
-                    rozklad.set(i, 1);
+                for (int i = 1; i <= length; i++) {
+                    distribution.set(i, 1);
                 }
-                dlugosc++;
-                rozklad.add(0);
+                length++;
+                distribution.add(0);
 
             }
-            rozklad.set(dlugosc, liczba - sum(rozklad));
+            distribution.set(length, number - sum(distribution));
         }
     }
 
-    static int sum(ArrayList<Integer> tablica) {
-        int suma = 0;
-        for (int i = 1; i < tablica.size(); i++) {
-            suma += tablica.get(i);
+    static int sum(ArrayList<Integer> table) {
+        int sum = 0;
+        for (int i = 1; i < table.size(); i++) {
+            sum += table.get(i);
         }
-        return suma;
+        return sum;
     }
 
-    public static Boolean waliduj(ArrayList tablica) {
-        ArrayList<Integer> temp = new ArrayList<Integer>(tablica);
+    //waliduj
+    public static Boolean validate(ArrayList table) {
+        ArrayList<Integer> temp = new ArrayList<Integer>(table);
         temp.remove(0);
-        for (Integer liczba : temp) {
-            if (!tablicaNominalow.contains(liczba)) {
+        for (Integer number : temp) {
+            if (!tableofDenominations.contains(number)) {
                 return false;
             }
         }
